@@ -1,16 +1,16 @@
 const validator = require("validator");
 
-const bcrypt = require("bcryptjs");
+// const bcrypt = require("bcryptjs");
 
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
-  name: {
-    type: String,
-    required: [true, "please provide name"],
-    minLength: 3,
-    maxLength: 50,
-  },
+  // name: {
+  //   type: String,
+  //   required: [true, "please provide name"],
+  //   minLength: 3,
+  //   maxLength: 50,
+  // },
   email: {
     type: String,
     unique: true,
@@ -25,28 +25,23 @@ const UserSchema = new mongoose.Schema({
     required: [true, "please provide password"],
     minLength: 6,
   },
-  role: {
-    type: String,
-    enum: ["admin", "user"],
-    default: "user",
-  },
 });
 
-UserSchema.pre("save", async function () {
-  // console.log(this.modifiedPaths());
-  //  console.log(this.isModified('name'));
+// UserSchema.pre("save", async function () {
+//   // console.log(this.modifiedPaths());
+//   //  console.log(this.isModified('name'));
 
-  if (!this.isModified("password")) return;
+//   if (!this.isModified("password")) return;
 
-  const salt = await bcrypt.genSalt(10);
+//   const salt = await bcrypt.genSalt(10);
 
-  this.password = await bcrypt.hash(this.password, salt);
-});
+//   this.password = await bcrypt.hash(this.password, salt);
+// });
 
-UserSchema.methods.comparePassword = async function (candidatePassword) {
-  const isMatch = await bcrypt.compare(candidatePassword, this.password);
+// UserSchema.methods.comparePassword = async function (candidatePassword) {
+//   const isMatch = await bcrypt.compare(candidatePassword, this.password);
 
-  return isMatch;
-};
+//   return isMatch;
+// };
 
 module.exports = mongoose.model("User", UserSchema);
