@@ -25,6 +25,12 @@ const UserSchema = new mongoose.Schema({
     required: [true, "please provide password"],
     minLength: 6,
   },
+  passwordToken: {
+    type: String,
+  },
+  passwordTokenExpirationDate: {
+    type: Date,
+  },
 });
 
 UserSchema.pre("save", async function () {
