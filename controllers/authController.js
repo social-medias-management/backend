@@ -69,7 +69,7 @@ const forgotPassword = async (req, res) => {
   }
 
   const user = await User.findOne({ email });
-
+  12;
   if (user) {
     const passwordToken = crypto.randomBytes(70).toString("hex");
 

@@ -6,8 +6,6 @@ const { isTokenValid } = require("../utils");
 const authenticateUser = async (req, res, next) => {
   const { accessToken } = req.signedCookies;
 
-  console.log(accessToken);
-
   try {
     if (accessToken) {
       const payload = isTokenValid(accessToken);

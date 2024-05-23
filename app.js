@@ -3,6 +3,7 @@ require("express-async-errors");
 
 const express = require("express");
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
 
 const app = express();
 
@@ -10,6 +11,12 @@ const app = express();
 const connectDB = require("./db/connect");
 
 //middleware
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    credentials: true,
+  })
+);
 app.use(express.json()); //middlware -> to access json data in body
 app.use(cookieParser(process.env.JWT_SECRET));
 
