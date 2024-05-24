@@ -8,8 +8,10 @@ const createJwt = ({ payload }) => {
   return token;
 };
 
-const isTokenValid = ({ token }) => jwt.verify(token, process.env.JWT_SECRET);
-
+const isTokenValid = (token) => {
+  const payload = jwt.verify(token, process.env.JWT_SECRET);
+  return payload;
+};
 const attachCookiesToResponse = ({ res, tokenUser }) => {
   const oneDay = 1000 * 60 * 60 * 24;
 
