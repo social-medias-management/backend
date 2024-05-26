@@ -37,7 +37,7 @@ const login = async (req, res) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw new CustomError.UnauthenticatedError("Invalid Crendentials d");
+    throw new CustomError.UnauthenticatedError("Invalid Crendentials ");
   }
 
   const isPasswordCorrect = await user.comparePassword(password);
@@ -98,9 +98,34 @@ const forgotPassword = async (req, res) => {
     .json({ msg: "Please check your email for your reset password lin" });
 };
 
+const resetPassword = async (req, res) => {
+  const { token, email, password } = req.body;
+  if (!token || !email || !password) {
+    throw new CustomError.BadRequestError("Please provide all values");
+  }
+
+  const user = await User.findOne({ email });
+
+  if (user) {
+    const currentDate = new Date();
+
+    if (
+      user.passwordToken === createHash(token) &&
+      user.passwordTokenExpirationDate > currentDate
+    ) {
+      user.password = password;
+      user.passwordToken = null;
+      user.passwordTokenExpirationDate = null;
+      await user.save();
+    }
+  }
+  res.status(StatusCodes.OK).json({ msg: "reset password" });
+};
+
 module.exports = {
   register,
   login,
   logout,
   forgotPassword,
+  resetPassword,
 };

@@ -13,7 +13,7 @@ const connectDB = require("./db/connect");
 //middleware
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "*",
     credentials: true,
   })
 );
@@ -27,11 +27,13 @@ const errorHandlerMiddleWare = require("./middleware/error-handler");
 //routers
 const authRouter = require("./routes/authRoutes");
 const userRouter = require("./routes/userRoutes");
+const tokenRouter = require("./routes/tokenRoutes");
 
 const port = process.env.PORT || 5000;
 
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/users", userRouter);
+app.use("/api/v1/token", tokenRouter);
 
 app.use(notFoundMiddleWare);
 app.use(errorHandlerMiddleWare);

@@ -10,12 +10,21 @@ const sendEmail = async ({ to, subject, html }) => {
     },
   });
 
-  return transporter.sendMail({
-    from: '"Sudarshan 👻" <sudarshandn199@gmail.com>',
-    to,
-    subject,
-    html,
-  });
+  return transporter.sendMail(
+    {
+      from: '"Sudarshan 👻" <sudarshandn199@gmail.com>',
+      to,
+      subject,
+      html,
+    },
+    (err, info) => {
+      if (err) {
+        console.log(err);
+      } else {
+        console.log(info);
+      }
+    }
+  );
 };
 
 module.exports = sendEmail;
