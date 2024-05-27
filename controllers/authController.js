@@ -20,6 +20,7 @@ const register = async (req, res) => {
   }
 
   const user = await User.create({ email, password, name });
+
   const tokenUser = createTokenUser(user);
 
   attachCookiesToResponse({ res, tokenUser });

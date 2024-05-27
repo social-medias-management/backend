@@ -1,16 +1,19 @@
 const User = require("../models/User");
 const Token = require("../models/Token");
+const { StatusCodes } = require("http-status-codes");
 
 const saveToken = async (req, res) => {
-  console.log(req);
+  const { accessToken, userId } = req.body;
 
-  //   const user = await User.findOne({ email });
+  const token = await Token.create({
+    metaCredentials: {
+      accessToken,
+      userId,
+    },
+    user: req.user.userId,
+  });
 
-  if (!user) {
-    throw new CustomError.UnauthenticatedError("Invalid Crendentials ");
-  }
-
-  console.log(req.body);
+  res.status(StatusCodes.CREATED).json({});
 };
 
 module.exports = {

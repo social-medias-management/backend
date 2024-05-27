@@ -2,18 +2,17 @@ const moongoose = require("mongoose");
 
 const TokenSchema = new moongoose.Schema(
   {
-    id: {
-      type: String,
-      required: true,
-    },
     user: {
       type: moongoose.Schema.ObjectId,
       ref: "User",
       required: true,
     },
-    metaToken: {
-      type: String,
-    },
+    metaCredentials: [
+      {
+        accessToken: String,
+        userId: String,
+      },
+    ],
   },
   {
     timestamps: true,

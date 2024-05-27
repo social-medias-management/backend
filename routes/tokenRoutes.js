@@ -1,9 +1,9 @@
 const express = require("express");
 const { authenticateUser } = require("../middleware/authentication");
 
-const router = express.Router();
-
 const { saveToken } = require("../controllers/tokenController");
+
+const router = express.Router();
 
 router.post("/token-save", authenticateUser, saveToken);
 
