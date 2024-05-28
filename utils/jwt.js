@@ -18,11 +18,12 @@ const attachCookiesToResponse = ({ res, tokenUser }) => {
   const token = createJwt({ payload: tokenUser });
 
   res.cookie("token", token, {
-    httpOnly: true,
+    httpOnly: false,
     expires: new Date(Date.now() + oneDay),
     secure: true,
     signed: true,
-    SameSite: "None",
+    path: "/",
+    sameSite: "None",
   });
 };
 

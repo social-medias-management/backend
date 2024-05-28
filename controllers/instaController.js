@@ -1,5 +1,5 @@
 const InstagramUser = require("../models/InstaUser");
-const Token = require("../models/Token");
+const PlatForm = require("../models/PlatForm");
 const InstaPost = require("../models/InstaPosts");
 const CustomError = require("../errors");
 const axios = require("axios");
@@ -9,13 +9,13 @@ const { StatusCodes } = require("http-status-codes");
 const saveInstaUser = async (req, res) => {
   const { userId } = req.user;
 
-  const token = await Token.find({ user: userId });
+  const token = await PlatForm.find({ user: userId });
 
   if (!token) {
     throw new CustomError.UnauthenticatedError("Invalid Crendentials ");
   }
 
-  const { accessToken, userId: facebookUserId } = token[0].metaCredentials[0];
+  const { accessToken, userId: facebookUserId } = token[0].instagram[0];
 
   const facebookPageResponse = await axios.get(
     `https://graph.facebook.com/v17.0/${facebookUserId}/accounts`,
@@ -75,6 +75,12 @@ const saveInstaUser = async (req, res) => {
     id,
   } = instaResponse.data;
 
+  await PlatForm.findOneAndUpdate(
+    { user: userId, "instagram._id": token[0].instagram[0]._id },
+    { $set: { "instagram.$.name": username } },
+    { new: true }
+  );
+
   const instProfileDetail = await InstagramUser.create({
     user_id: id,
     followers_count,
@@ -92,7 +98,7 @@ const saveInstaUser = async (req, res) => {
 
 const SaveInstaPost = async (req, res) => {
   const { userId } = req.user;
-  const token = await Token.find({ user: userId });
+  const token = await PlatForm.find({ user: userId });
 
   const instaUser = await InstaUser.find({ user: userId });
 
@@ -100,7 +106,7 @@ const SaveInstaPost = async (req, res) => {
     throw new CustomError.UnauthenticatedError("Invalid Crendentials ");
   }
 
-  const { accessToken, userId: facebookUserId } = token[0].metaCredentials[0];
+  const { accessToken, userId: facebookUserId } = token[0].instagram[0];
 
   const InstaMedia = await axios.get(
     `https://graph.facebook.com/v17.0/${instaUser[0].user_id}/media`,
