@@ -2,17 +2,24 @@ const { StatusCodes } = require("http-status-codes");
 const PlatForm = require("../models/PlatForm");
 
 const saveToken = async (req, res) => {
-  const { accessToken, userId, platform } = req.body;
+  const { accessToken, userId, platform, name } = req.body;
 
   let token;
-  if (platform === "instagram") {
-    token = await PlatForm.create({
-      instagram: {
-        accessToken,
-        userId,
-      },
-      user: req.user.userId,
-    });
+  let platformData = {
+    [platform]: {
+      accessToken,
+      tokenId: userId,
+      name: name ? name : "",
+    },
+    user: req.user.userId,
+  };
+  let existingPlatform = await PlatForm.findOne({ user: req.user.userId });
+
+  if (existingPlatform) {
+    await PlatForm.updateOne({ user: req.user.userId }, platformData);
+    token = existingPlatform;
+  } else {
+    token = await PlatForm.create(platformData);
   }
 
   res.status(StatusCodes.CREATED).json(token);
@@ -26,10 +33,6 @@ const userPlatform = async (req, res) => {
   const { userId } = req.user;
 
   const platform = await PlatForm.find({ user: userId });
-
-  // const nonEmptyPlatforms = platform.filter(
-  //   (platformData) => Array.isArray(platformData) && platformData.length > 0
-  // );
 
   res.status(StatusCodes.OK).json(platform);
 };

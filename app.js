@@ -11,13 +11,12 @@ const app = express();
 const connectDB = require("./db/connect");
 
 //middleware
-
 app.use(cookieParser(process.env.JWT_SECRET));
 
 app.use(
   cors({
     origin: [
-      "https://e17f-27-34-65-96.ngrok-free.app",
+      "https://7f75-27-34-65-96.ngrok-free.app",
       "http://localhost:3000",
     ],
     credentials: true,

@@ -10,14 +10,14 @@ const PlatFormSchema = new moongoose.Schema(
     facebook: [
       {
         accessToken: String,
-        userId: String,
+        tokenId: String,
         name: String,
       },
     ],
     instagram: [
       {
         accessToken: String,
-        userId: String,
+        tokenId: String,
         name: String,
       },
     ],
