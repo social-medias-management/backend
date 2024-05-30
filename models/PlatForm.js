@@ -21,6 +21,13 @@ const PlatFormSchema = new moongoose.Schema(
         name: String,
       },
     ],
+    facebookPages: [
+      {
+        accessToken: String,
+        pageId: String,
+        name: String,
+      },
+    ],
   },
   {
     timestamps: true,

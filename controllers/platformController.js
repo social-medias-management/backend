@@ -37,7 +37,22 @@ const userPlatform = async (req, res) => {
   res.status(StatusCodes.OK).json(platform);
 };
 
+const getConnectedPlatForm = async (req, res) => {
+  const connectUserPlatform = await PlatForm.findOne({ user: req.user.userId });
+
+  const nonEmptyAarra = connectUserPlatform.reduce((acc, currentMedia) => {
+    if (Array.isArray(currentMedia) && currentMedia.length > 0) {
+      acc.push(currentMedia);
+      return acc;
+    }
+    return acc;
+  }, []);
+
+  res.status(StatusCodes.Ok).json(nonEmptyAarra);
+};
+
 module.exports = {
   saveToken,
   userPlatform,
+  getConnectedPlatForm,
 };
