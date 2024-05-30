@@ -2,7 +2,7 @@ const { StatusCodes } = require("http-status-codes");
 const CustomError = require("../errors");
 
 const showCurrentUser = async (req, res) => {
-  res.status(StatusCodes.OK).json({ user: req.user });
+  res.status(StatusCodes.OK).json(req.user);
 };
 
 const updateUserPassword = async (req, res) => {
