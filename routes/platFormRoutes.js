@@ -11,6 +11,6 @@ const router = express.Router();
 
 router.post("/token-save", authenticateUser, saveToken);
 router.get("/user-platform", authenticateUser, userPlatform);
-router.get("/connected-media", authenticateUser, userPlatform);
+router.get("/connected-media", authenticateUser, getConnectedPlatForm);
 
 module.exports = router;

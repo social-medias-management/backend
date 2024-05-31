@@ -1,5 +1,6 @@
 const { StatusCodes } = require("http-status-codes");
 const PlatForm = require("../models/PlatForm");
+const InstaUser = require("../models/InstaUser");
 
 const saveToken = async (req, res) => {
   const { accessToken, userId, platform, name } = req.body;
@@ -38,17 +39,22 @@ const userPlatform = async (req, res) => {
 };
 
 const getConnectedPlatForm = async (req, res) => {
-  const connectUserPlatform = await PlatForm.findOne({ user: req.user.userId });
+  const instaUser = await InstaUser.find({ user: req.user.userId });
 
-  const nonEmptyAarra = connectUserPlatform.reduce((acc, currentMedia) => {
-    if (Array.isArray(currentMedia) && currentMedia.length > 0) {
-      acc.push(currentMedia);
-      return acc;
-    }
-    return acc;
-  }, []);
+  const connectUserPlatform = await PlatForm.find({
+    user: req.user.userId,
+    instagram: { $ne: [] },
+    facebook: { $ne: [] },
+    facebookPages: { $ne: [] },
+  }).lean();
 
-  res.status(StatusCodes.Ok).json(nonEmptyAarra);
+  connectUserPlatform.forEach((platform) => {
+    platform.instagram.forEach((instagramObj) => {
+      instagramObj.profile_picture_url = instaUser.profile_picture_url;
+    });
+  });
+
+  res.status(StatusCodes.OK).json(connectUserPlatform);
 };
 
 module.exports = {

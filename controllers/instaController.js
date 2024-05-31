@@ -100,6 +100,14 @@ const saveInstaUser = async (req, res) => {
   return res.status(200).json(instProfileDetail);
 };
 
+const getInstagramUser = async (req, res) => {
+  const { userId } = req.user;
+
+  const user = await InstagramUser.find({ user: userId });
+
+  res.status(StatusCodes.OK).json(user);
+};
+
 const SaveInstaPost = async (req, res) => {
   const { userId } = req.user;
   const token = await PlatForm.find({ user: userId });
@@ -140,7 +148,7 @@ const SaveInstaPost = async (req, res) => {
     await InstaPost.create({ media: instaPostJSON, user: userId });
   });
 
-  res.status(200).json({ msg: "succ" });
+  res.status(200).json({ msg: "success" });
 };
 
 const InstaGramPost = async (req, res) => {
@@ -154,4 +162,5 @@ module.exports = {
   saveInstaUser,
   SaveInstaPost,
   InstaGramPost,
+  getInstagramUser,
 };
