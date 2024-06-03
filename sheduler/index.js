@@ -2,7 +2,7 @@ const cron = require("node-cron");
 const hourlyTask = require("./hourlyTask");
 
 function setupSchedulers() {
-  cron.schedule("* * * * *", () => {
+  cron.schedule("0 * * * *", () => {
     hourlyTask.run();
   });
 
@@ -12,3 +12,4 @@ function setupSchedulers() {
 }
 
 module.exports = setupSchedulers;
+
