@@ -1,3 +1,5 @@
+const axios = require("axios");
+
 const PlatForm = require("../models/PlatForm");
 const PostShedule = require("../models/SheduleSchema");
 const { StatusCodes } = require("http-status-codes");
@@ -23,22 +25,26 @@ async function runHourlyTask() {
   platform.forEach((platform) => {
     usersIds.forEach((id) => {
       if (id === platform.user.toString()) {
-        const instaToken = platform.instagram[0].accessToken;
-        const instaId = platform.instagram[0].tokenId;
-        userDetail.push({
-          key: "instagram",
-          token: instaToken,
-          socialId: instaId,
-          userId: id,
-        });
-        const facebookToken = platform.facebook[0].accessToken;
-        const facebookId = platform.facebook[0].tokenId;
-        userDetail.push({
-          key: "facebook",
-          token: facebookToken,
-          socialId: facebookId,
-          userId: id,
-        });
+        if (platform.instagram.length > 0) {
+          const instaToken = platform.instagram[0].accessToken;
+          const instaId = platform.instagram[0].tokenId;
+          userDetail.push({
+            key: "instagram",
+            token: instaToken,
+            socialId: instaId,
+            userId: id,
+          });
+        }
+        if (platform.facebook.length > 0) {
+          const facebookToken = platform.facebook[0].accessToken;
+          const facebookId = platform.facebook[0].tokenId;
+          userDetail.push({
+            key: "facebook",
+            token: facebookToken,
+            socialId: facebookId,
+            userId: id,
+          });
+        }
       }
     });
   });
@@ -50,8 +56,47 @@ async function runHourlyTask() {
           const instagramPosts = JSON.parse(JSON.stringify(posts.instagram));
           const accessToken = detail.token;
           const socialId = detail.socialId;
-          instagramPosts.forEach((insta) => {
-            console.log("post insta", insta);
+          instagramPosts.forEach(async (insta) => {
+            console.log(socialId);
+            const url = `https://graph.facebook.com/v20.0/${socialId}/media?`;
+
+            const data = {
+              image_url: insta.imgUrl,
+              access_token: accessToken,
+              caption: insta.caption,
+            };
+
+            const res = await axios.post(url, data);
+
+            const publishId = res.data;
+
+            const publishUrl = `https://graph.facebook.com/v20.0/${socialId}/media_publish?access_token=${accessToken}&creation_id=${publishId.id}`;
+            axios
+              .post(publishUrl)
+              .then((res) =>
+                console.log("photo uploaded successfulyy facebook", res.data)
+              );
+          });
+        }
+        if (posts.facebook.length > 0 && detail.key === "facebook") {
+          const facebookPosts = JSON.parse(JSON.stringify(posts.facebook));
+          const accessToken = detail.token;
+          const socialId = detail.socialId;
+          facebookPosts.forEach((facebook) => {
+            console.log("facebook=", facebook, socialId);
+            const url = `https://graph.facebook.com/v20.0/${socialId}/photos`;
+
+            const data = {
+              url: facebook.imgUrl,
+              access_token: accessToken,
+              message: facebook.caption,
+            };
+
+            axios
+              .post(url, data)
+              .then((res) =>
+                console.log("photo uploaded successfulyy facebook", res.data)
+              );
           });
         }
       }

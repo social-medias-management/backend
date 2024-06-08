@@ -1,6 +1,5 @@
 const express = require("express");
 const { authenticateUser } = require("../middleware/authentication");
-const {} = require("../middleware/authentication");
 const {
   register,
   login,

@@ -1,38 +1,61 @@
-const PostShedule = require("../models/SheduleSchema");
+const PostSchedule = require("../models/SheduleSchema");
 const { StatusCodes } = require("http-status-codes");
 
 const createShedule = async (req, res) => {
   const { start, end, platform, mediaType, caption, imgUrl } = req.body;
 
-  let platformData = {
-    start,
-    end,
-    [platform]: {
-      mediaType,
-      caption,
-      imgUrl,
-    },
-    user: req.user.userId,
-  };
+  try {
+    let platformData = {
+      start,
+      end,
+      user: req.user.userId,
+    };
 
-  let existingPost = await PostShedule.findOne({
-    user: req.user.userId,
-    start: start,
-    end: end,
-    $or: [{ [platform]: { $exists: false } }, { [platform]: null }],
-  });
+    platform.forEach((plat) => {
+      if (plat.facebook) {
+        platformData.facebook = {
+          mediaType,
+          caption,
+          imgUrl,
+        };
+      }
+      if (plat.instagram) {
+        platformData.instagram = {
+          mediaType,
+          caption,
+          imgUrl,
+        };
+      }
+    });
 
-  if (existingPost) {
-    await PostShedule.updateOne({ _id: existingPost._id }, platformData);
-    res.status(StatusCodes.OK).json(existingPost);
-  } else {
-    let newPost = await PostShedule.create(platformData);
-    res.status(StatusCodes.CREATED).json(newPost);
+    let existingPost = await PostSchedule.findOne({
+      user: req.user.userId,
+      start: start,
+      end: end,
+      $or: [
+        { facebook: { $exists: false } },
+        { instagram: { $exists: false } },
+        { facebook: null },
+        { instagram: null },
+      ],
+    });
+
+    if (existingPost) {
+      await PostSchedule.updateOne({ _id: existingPost._id }, platformData);
+      res.status(StatusCodes.OK).json(existingPost);
+    } else {
+      let newPost = await PostSchedule.create(platformData);
+      res.status(StatusCodes.CREATED).json(newPost);
+    }
+  } catch (error) {
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: error.message });
   }
 };
 
 const getShedulePost = async (req, res) => {
-  const shedulePost = await PostShedule.find({ user: req.user.userId });
+  const shedulePost = await PostSchedule.find({ user: req.user.userId });
 
   res.status(StatusCodes.OK).json(shedulePost);
 };

@@ -81,7 +81,12 @@ const saveInstaUser = async (req, res) => {
 
   await PlatForm.findOneAndUpdate(
     { user: userId, "instagram._id": token[0].instagram[0]._id },
-    { $set: { "instagram.$.name": username } },
+    {
+      $set: {
+        "instagram.$.name": username,
+        "instagram.$.tokenId": id,
+      },
+    },
     { new: true }
   );
 
