@@ -24,7 +24,7 @@ const PlatFormSchema = new moongoose.Schema(
     youtube: [
       {
         accessToken: String,
-        pageId: String,
+        tokenId: String,
         name: String,
       },
     ],

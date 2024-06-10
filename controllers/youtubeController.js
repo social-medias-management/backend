@@ -15,7 +15,7 @@ const saveYoutubeToken = async (req, res) => {
   params.append("client_secret", "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");
   params.append("code", code);
   params.append("grant_type", "authorization_code");
-  params.append("redirect_uri", "https://e080-27-34-65-96.ngrok-free.app");
+  params.append("redirect_uri", process.env.GOOGLE_REDIRECT_URI);
 
   const response = await axios.post(
     "https://oauth2.googleapis.com/token",
@@ -68,6 +68,7 @@ const saveYoutubeToken = async (req, res) => {
     subscriberCount: parseInt(channelItem.statistics.subscriberCount, 10),
     hiddenSubscriberCount: channelItem.statistics.hiddenSubscriberCount,
     videoCount: parseInt(channelItem.statistics.videoCount, 10),
+    contentDetails: JSON.stringify(channelItem.contentDetails),
   };
 
   await Youtube.create(channelData);
@@ -90,7 +91,7 @@ const saveYoutubeToken = async (req, res) => {
     token = await PlatForm.create(platformData);
   }
 
-  res.status(StatusCodes.CREATED).json(token);
+  res.status(StatusCodes.CREATED).json({ msg: "ok" });
 };
 
 module.exports = {

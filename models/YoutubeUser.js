@@ -15,6 +15,7 @@ const youtubeChannelSchema = new mongoose.Schema({
   subscriberCount: { type: Number, default: 0 },
   hiddenSubscriberCount: { type: Boolean, default: false },
   videoCount: { type: Number, default: 0 },
+  contentDetails: String,
   user: {
     type: mongoose.Schema.ObjectId,
     ref: "User",

@@ -83,7 +83,6 @@ async function runHourlyTask() {
           const accessToken = detail.token;
           const socialId = detail.socialId;
           facebookPosts.forEach((facebook) => {
-            console.log("facebook=", facebook, socialId);
             const url = `https://graph.facebook.com/v20.0/${socialId}/photos`;
 
             const data = {
