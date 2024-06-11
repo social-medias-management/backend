@@ -14,6 +14,7 @@ async function runHourlyTask() {
   const shedulePosts = await PostShedule.find({
     start: { $lte: currentDate.toDate() },
     end: { $gte: currentDate.toDate() },
+    isPublished: false,
   });
 
   const platform = await PlatForm.find({});
@@ -50,14 +51,13 @@ async function runHourlyTask() {
   });
 
   shedulePosts.forEach((posts) => {
-    userDetail.forEach((detail) => {
+    userDetail.forEach(async (detail) => {
       if ((detail.userId = posts.user.toString())) {
         if (posts.instagram.length > 0 && detail.key === "instagram") {
           const instagramPosts = JSON.parse(JSON.stringify(posts.instagram));
           const accessToken = detail.token;
           const socialId = detail.socialId;
           instagramPosts.forEach(async (insta) => {
-            console.log(socialId);
             const url = `https://graph.facebook.com/v20.0/${socialId}/media?`;
 
             const data = {
@@ -74,7 +74,7 @@ async function runHourlyTask() {
             axios
               .post(publishUrl)
               .then((res) =>
-                console.log("photo uploaded successfulyy facebook", res.data)
+                console.log("photo uploaded successfulyy instagram")
               );
           });
         }
@@ -94,9 +94,13 @@ async function runHourlyTask() {
             axios
               .post(url, data)
               .then((res) =>
-                console.log("photo uploaded successfulyy facebook", res.data)
+                console.log("photo uploaded successfulyy facebook")
               );
           });
+          await PostShedule.updateMany(
+            { userId: detail.userId },
+            { $set: { isPublished: true } }
+          );
         }
       }
     });

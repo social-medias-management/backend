@@ -10,6 +10,10 @@ const SheduleSchema = new Schema({
     type: Date,
     required: true,
   },
+  isPublished: {
+    type: Boolean,
+    default: false,
+  },
 
   facebook: [
     {
