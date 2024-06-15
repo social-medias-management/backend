@@ -96,11 +96,20 @@ async function runHourlyTask() {
               .then((res) =>
                 console.log("photo uploaded successfulyy facebook")
               );
-          });
-          await PostShedule.updateMany(
-            { userId: detail.userId },
-            { $set: { isPublished: true } }
-          );
+   
+            } catch (error) {
+              console.log(error.message)
+            }
+   
+            });
+        
+        
+        }
+
+          // await PostShedule.updateMany(
+          //   { userId: detail.userId },
+          //   { $set: { isPublished: true } }
+          // );
         }
       }
     });
