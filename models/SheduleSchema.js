@@ -19,7 +19,7 @@ const SheduleSchema = new Schema({
     {
       mediaType: String,
       caption: String,
-      imgUrl: String,
+      mediaUrl: String,
     },
   ],
 
@@ -27,7 +27,14 @@ const SheduleSchema = new Schema({
     {
       mediaType: String,
       caption: String,
-      imgUrl: String,
+      mediaUrl: String,
+    },
+  ],
+  instagram: [
+    {
+      mediaType: String,
+      caption: String,
+      mediaUrl: String,
     },
   ],
   user: {

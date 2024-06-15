@@ -80,8 +80,17 @@ const getFacebookPost = async (req, res) => {
   res.status(200).json(data);
 };
 
+const deleteFacebookUser = async (req, res) => {
+  const { userId } = req.user;
+
+  await FacebookPage.deleteMany({ user: userId });
+  await FacebookPost.deleteMany({ user: userId });
+
+  res.status(StatusCodes.OK).json({ msg: "deleted" });
+};
 module.exports = {
   saveFacebookPageDetail,
   saveFacebookPost,
   getFacebookPost,
+  deleteFacebookUser,
 };

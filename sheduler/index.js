@@ -3,7 +3,7 @@ const hourlyTask = require("./hourlyTask");
 
 function setupSchedulers() {
   cron.schedule("* * * * *", () => {
-    hourlyTask.run();
+    // hourlyTask.run();
   });
 
   cron.schedule("0 0 * * *", () => {

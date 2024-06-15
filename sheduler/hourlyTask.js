@@ -61,23 +61,33 @@ async function runHourlyTask() {
             const url = `https://graph.facebook.com/v20.0/${socialId}/media?`;
 
             const data = {
-              image_url: insta.imgUrl,
+              image_url: insta.mediaUrl,
               access_token: accessToken,
               caption: insta.caption,
             };
 
-            const res = await axios.post(url, data);
+            try {
+              const res = await axios.post(url, data);
 
-            const publishId = res.data;
+              const publishId = res.data;
 
-            const publishUrl = `https://graph.facebook.com/v20.0/${socialId}/media_publish?access_token=${accessToken}&creation_id=${publishId.id}`;
-            axios
-              .post(publishUrl)
-              .then((res) =>
-                console.log("photo uploaded successfulyy instagram")
-              );
+              const publishUrl = `https://graph.facebook.com/v20.0/${socialId}/media_publish?access_token=${accessToken}&creation_id=${publishId.id}`;
+              axios
+                .post(publishUrl)
+                .then((res) =>
+                  console.log("photo uploaded successfulyy instagram")
+                );
+            } catch (error) {
+              console.log(error.message);
+            }
           });
+
+          // await PostShedule.updateMany(
+          //   { userId: detail.userId },
+          //   { $set: { isPublished: true } }
+          // );
         }
+
         if (posts.facebook.length > 0 && detail.key === "facebook") {
           const facebookPosts = JSON.parse(JSON.stringify(posts.facebook));
           const accessToken = detail.token;
@@ -86,25 +96,21 @@ async function runHourlyTask() {
             const url = `https://graph.facebook.com/v20.0/${socialId}/photos`;
 
             const data = {
-              url: facebook.imgUrl,
+              url: facebook.mediaUrl,
               access_token: accessToken,
               message: facebook.caption,
             };
 
-            axios
-              .post(url, data)
-              .then((res) =>
-                console.log("photo uploaded successfulyy facebook")
-              );
-   
+            try {
+              axios
+                .post(url, data)
+                .then((res) =>
+                  console.log("photo uploaded successfulyy facebook")
+                );
             } catch (error) {
-              console.log(error.message)
+              console.log(error.message);
             }
-   
-            });
-        
-        
-        }
+          });
 
           // await PostShedule.updateMany(
           //   { userId: detail.userId },
@@ -115,7 +121,6 @@ async function runHourlyTask() {
     });
   });
 
-  // console.log("user=", userDetail);
   console.log("Running hourly task...");
 }
 module.exports = {

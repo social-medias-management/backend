@@ -1,6 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 const PlatForm = require("../models/PlatForm");
 const InstaUser = require("../models/InstaUser");
+const FacebookPage = require("../models/FacebookPage");
 
 const saveToken = async (req, res) => {
   const { accessToken, userId, platform, name } = req.body;

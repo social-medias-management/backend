@@ -24,7 +24,7 @@ app.use(cookieParser(process.env.JWT_SECRET));
 app.use(
   cors({
     origin: [
-      "https://4499-27-34-65-96.ngrok-free.app",
+      "https://f1f8-27-34-65-96.ngrok-free.app",
       "http://localhost:3000",
     ],
     credentials: true,
@@ -55,6 +55,7 @@ const instaRouter = require("./routes/instaRoutes");
 const facebookRouter = require("./routes/facebookRoutes");
 const sheduleRouter = require("./routes/sheduleRoutes");
 const youtubeRoutes = require("./routes/youtubeRoutes");
+const tiktokRoutes = require("./routes/tiktokRoute");
 
 const port = process.env.PORT || 5000;
 
@@ -65,6 +66,7 @@ app.use("/api/v1/insta", instaRouter);
 app.use("/api/v1/facebook", facebookRouter);
 app.use("/api/v1/shedule", sheduleRouter);
 app.use("/api/v1/yt", youtubeRoutes);
+app.use("/api/v1/tiktok", tiktokRoutes);
 
 app.use(notFoundMiddleWare);
 app.use(errorHandlerMiddleWare);

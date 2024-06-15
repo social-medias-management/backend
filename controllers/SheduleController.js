@@ -16,14 +16,21 @@ const createShedule = async (req, res) => {
         platformData.facebook = {
           mediaType,
           caption,
-          imgUrl,
+          mediaUrl: imgUrl,
         };
       }
       if (plat.instagram) {
         platformData.instagram = {
           mediaType,
           caption,
-          imgUrl,
+          mediaUrl: imgUrl,
+        };
+      }
+      if (plat.youtube) {
+        platformData.youtube = {
+          mediaType,
+          caption,
+          mediaUrl: imgUrl,
         };
       }
     });
@@ -35,8 +42,10 @@ const createShedule = async (req, res) => {
       $or: [
         { facebook: { $exists: false } },
         { instagram: { $exists: false } },
+        { youtube: { $exists: false } },
         { facebook: null },
         { instagram: null },
+        { youtube: null },
       ],
     });
 
