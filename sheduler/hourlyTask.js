@@ -1,10 +1,12 @@
 const axios = require("axios");
+const path = require("path");
 
 const PlatForm = require("../models/PlatForm");
 const PostShedule = require("../models/SheduleSchema");
 const { StatusCodes } = require("http-status-codes");
 const moment = require("moment");
-
+const fs = require("fs");
+const { google } = require("googleapis");
 async function runHourlyTask() {
   const currentDate = moment();
 
@@ -22,6 +24,8 @@ async function runHourlyTask() {
   shedulePosts.forEach((item) => {
     usersIds.push(item.user.toString());
   });
+
+  console.log(shedulePosts);
 
   platform.forEach((platform) => {
     usersIds.forEach((id) => {
@@ -41,6 +45,16 @@ async function runHourlyTask() {
           const facebookId = platform.facebook[0].tokenId;
           userDetail.push({
             key: "facebook",
+            token: facebookToken,
+            socialId: facebookId,
+            userId: id,
+          });
+        }
+        if (platform.youtube.length > 0) {
+          const facebookToken = platform.youtube[0].accessToken;
+          const facebookId = platform.youtube[0].tokenId;
+          userDetail.push({
+            key: "youtube",
             token: facebookToken,
             socialId: facebookId,
             userId: id,
@@ -116,6 +130,82 @@ async function runHourlyTask() {
           //   { userId: detail.userId },
           //   { $set: { isPublished: true } }
           // );
+        }
+
+        if (posts.youtube.length > 0 && detail.key === "youtube") {
+          const youtubePosts = JSON.parse(JSON.stringify(posts.youtube));
+          const accessToken = detail.token;
+          const socialId = detail.socialId;
+
+          youtubePosts.forEach(async (youtubePost) => {
+            const ACCESS_TOKEN = accessToken;
+            const fileUrl = youtubePost.mediaUrl;
+            const filePath = path.join(__dirname, `temp_${socialId}.mp4`);
+            const oAuth2Client = new google.auth.OAuth2();
+
+            oAuth2Client.setCredentials({ access_token: ACCESS_TOKEN });
+
+            const youtube = google.youtube({
+              version: "v3",
+              auth: oAuth2Client,
+            });
+
+            async function downloadVideo(url, destination) {
+              const response = await axios({
+                url,
+                method: "GET",
+                responseType: "stream",
+              });
+
+              const writer = fs.createWriteStream(destination);
+
+              return new Promise((resolve, reject) => {
+                response.data.pipe(writer);
+                let error = null;
+                writer.on("error", (err) => {
+                  error = err;
+                  writer.close();
+                  reject(err);
+                });
+                writer.on("close", () => {
+                  if (!error) {
+                    resolve();
+                  }
+                });
+              });
+            }
+
+            try {
+              console.log("Downloading video:", fileUrl);
+              await downloadVideo(fileUrl, filePath);
+              console.log("Video downloaded successfully.");
+
+              console.log("Uploading video to YouTube...");
+              const res = await youtube.videos.insert({
+                resource: {
+                  snippet: {
+                    title: youtubePost.title || "Default Title",
+                    description:
+                      youtubePost.description || "Default Description",
+                    tags: youtubePost.tags || ["tag1", "tag2", "tag3"],
+                  },
+                  status: {
+                    privacyStatus: youtubePost.privacyStatus || "public",
+                  },
+                },
+                part: "snippet,status",
+                media: {
+                  body: fs.createReadStream(filePath),
+                },
+              });
+
+              console.log("Video uploaded successfully:", res.data);
+              // Cleanup: remove the downloaded video file
+              fs.unlinkSync(filePath);
+            } catch (err) {
+              console.error("Error:", err);
+            }
+          });
         }
       }
     });

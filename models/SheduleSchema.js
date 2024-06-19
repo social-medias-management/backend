@@ -30,7 +30,7 @@ const SheduleSchema = new Schema({
       mediaUrl: String,
     },
   ],
-  instagram: [
+  youtube: [
     {
       mediaType: String,
       caption: String,

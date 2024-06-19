@@ -16,7 +16,9 @@ const uploadPost = async (req, res) => {
     resource_type: "auto",
   });
 
-  return res.status(StatusCodes.OK).json({ image: { src: result.secure_url } });
+  return res
+    .status(StatusCodes.OK)
+    .json({ image: { src: result.secure_url }, mediaType: req.body.mediaType });
 };
 
 module.exports = {
