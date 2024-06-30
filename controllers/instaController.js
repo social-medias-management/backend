@@ -163,9 +163,19 @@ const InstaGramPost = async (req, res) => {
   res.status(StatusCodes.OK).json(posts);
 };
 
+const deleteInstaData = async (req, res) => {
+  const { userId } = req.user;
+
+  await InstagramUser.deleteMany({ user: userId });
+  await InstaPost.deleteMany({ user: userId });
+  await PlatForm.updateMany({ user: userId }, { $unset: { instagram: 1 } });
+  res.status(200).json({ msg: "Delete succefully" });
+};
+
 module.exports = {
   saveInstaUser,
   SaveInstaPost,
   InstaGramPost,
   getInstagramUser,
+  deleteInstaData,
 };

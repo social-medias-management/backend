@@ -1,7 +1,7 @@
 const { StatusCodes } = require("http-status-codes");
 const PlatForm = require("../models/PlatForm");
 const InstaUser = require("../models/InstaUser");
-const FacebookPage = require("../models/FacebookPage");
+const PageDetail = require("../models/FacebookPage");
 
 const saveToken = async (req, res) => {
   const { accessToken, userId, platform, name } = req.body;
@@ -41,6 +41,7 @@ const userPlatform = async (req, res) => {
 
 const getConnectedPlatForm = async (req, res) => {
   const instaUser = await InstaUser.find({ user: req.user.userId });
+  const facebookPageInfo = await PageDetail.find({ user: req.user.userId });
 
   const connectUserPlatform = await PlatForm.find({
     user: req.user.userId,
@@ -49,13 +50,43 @@ const getConnectedPlatForm = async (req, res) => {
     facebookPages: { $ne: [] },
   }).lean();
 
-  connectUserPlatform.forEach((platform) => {
-    platform.instagram.forEach((instagramObj) => {
-      instagramObj.profile_picture_url = instaUser.profile_picture_url;
-    });
+  const newArr = connectUserPlatform.map((platform) => {
+    const newrr = [];
+
+    if (platform.facebook && platform.facebook.length > 0) {
+      const facebookValue = {
+        key: "facebook",
+        tokenId: platform.facebook[0].tokenId,
+        name: platform.facebook[0].name,
+        id: platform.facebook[0]._id,
+        profile_picture_url: facebookPageInfo[0].picture,
+      };
+      newrr.push(facebookValue);
+    }
+    if (platform.instagram && platform.instagram.length > 0) {
+      const facebookValue = {
+        key: "instagram",
+        tokenId: platform.instagram[0].tokenId,
+        name: platform.instagram[0].name,
+        id: platform.instagram[0]._id,
+        profile_picture_url: instaUser[0].profile_picture_url,
+      };
+      newrr.push(facebookValue);
+    }
+    if (platform.youtube && platform.youtube.length > 0) {
+      const facebookValue = {
+        key: "youtube",
+        tokenId: platform.youtube[0].tokenId,
+        name: platform.youtube[0].name,
+        id: platform.youtube[0]._id,
+        profile_picture_url: instaUser[0].profile_picture_url,
+      };
+      newrr.push(facebookValue);
+    }
+    return newrr;
   });
 
-  res.status(StatusCodes.OK).json(connectUserPlatform);
+  res.status(StatusCodes.OK).json(newArr.flat());
 };
 
 module.exports = {
