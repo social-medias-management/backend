@@ -85,8 +85,9 @@ const deleteFacebookUser = async (req, res) => {
 
   await FacebookPage.deleteMany({ user: userId });
   await FacebookPost.deleteMany({ user: userId });
+  await PlatForm.updateMany({ user: userId }, { $unset: { facebook: 1 } });
 
-  res.status(StatusCodes.OK).json({ msg: "deleted" });
+  res.status(StatusCodes.OK).json({ msg: "deleted succefully " });
 };
 module.exports = {
   saveFacebookPageDetail,
