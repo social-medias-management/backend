@@ -45,9 +45,9 @@ const getConnectedPlatForm = async (req, res) => {
 
   const connectUserPlatform = await PlatForm.find({
     user: req.user.userId,
-    instagram: { $ne: [] },
-    facebook: { $ne: [] },
-    facebookPages: { $ne: [] },
+    // instagram: { $ne: [] },
+    // facebook: { $ne: [] },
+    // youtube: { $ne: [] },
   }).lean();
 
   const newArr = connectUserPlatform.map((platform) => {
@@ -59,6 +59,7 @@ const getConnectedPlatForm = async (req, res) => {
         tokenId: platform.facebook[0].tokenId,
         name: platform.facebook[0].name,
         id: platform.facebook[0]._id,
+        accessToken: platform.facebook[0].accessToken,
         profile_picture_url: facebookPageInfo[0].picture,
       };
       newrr.push(facebookValue);
@@ -69,6 +70,8 @@ const getConnectedPlatForm = async (req, res) => {
         tokenId: platform.instagram[0].tokenId,
         name: platform.instagram[0].name,
         id: platform.instagram[0]._id,
+        accessToken: platform.instagram[0].accessToken,
+
         profile_picture_url: instaUser[0].profile_picture_url,
       };
       newrr.push(facebookValue);
@@ -79,6 +82,8 @@ const getConnectedPlatForm = async (req, res) => {
         tokenId: platform.youtube[0].tokenId,
         name: platform.youtube[0].name,
         id: platform.youtube[0]._id,
+        accessToken: platform.youtube[0].accessToken,
+
         profile_picture_url: instaUser[0].profile_picture_url,
       };
       newrr.push(facebookValue);
