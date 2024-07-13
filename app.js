@@ -24,7 +24,7 @@ app.use(cookieParser(process.env.JWT_SECRET));
 app.use(
   cors({
     origin: [
-      "https://7b3d-27-34-65-69.ngrok-free.app",
+      "https://cz7nlv6m-5000.inc1.devtunnels.ms",
       "http://localhost:3000",
     ],
     credentials: true,
@@ -46,6 +46,25 @@ const sheduler = require("./sheduler");
 //middleware
 const notFoundMiddleWare = require("./middleware/not-found");
 const errorHandlerMiddleWare = require("./middleware/error-handler");
+
+app.get("/webhook", (req, res) => {
+  const mode = req.query["hub.mode"];
+  const token = req.query["hub.verify_token"];
+  const challenge = req.query["hub.challenge"];
+
+  console.log(mode, token);
+
+  if (mode && token === "12345") {
+    res.status(200).send(challenge);
+  } else {
+    res.status(403).send("Forbidden");
+  }
+});
+
+app.post("/webhook", (req, res) => {
+  console.log("Webhook event received:", req.body);
+  res.status(200).send("EVENT_RECEIVED");
+});
 
 //routers
 const authRouter = require("./routes/authRoutes");
