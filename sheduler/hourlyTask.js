@@ -25,8 +25,6 @@ async function runHourlyTask() {
     usersIds.push(item.user.toString());
   });
 
-  console.log(shedulePosts);
-
   platform.forEach((platform) => {
     usersIds.forEach((id) => {
       if (id === platform.user.toString()) {

@@ -12,5 +12,6 @@ const { uploadPost } = require("../controllers/uploadPostControllet");
 router.post("/create-shedule", authenticateUser, createShedule);
 router.post("/uploads", authenticateUser, uploadPost);
 router.get("/shedule-post", authenticateUser, getShedulePost);
+router.delete("/", authenticateUser, getShedulePost);
 
 module.exports = router;

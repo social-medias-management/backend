@@ -48,16 +48,23 @@ const notFoundMiddleWare = require("./middleware/not-found");
 const errorHandlerMiddleWare = require("./middleware/error-handler");
 
 app.get("/webhook", (req, res) => {
+  const VERIFY_TOKEN = "random string";
+  // Parse the query params
   const mode = req.query["hub.mode"];
   const token = req.query["hub.verify_token"];
   const challenge = req.query["hub.challenge"];
 
-  console.log(mode, token);
-
-  if (mode && token === "12345") {
-    res.status(200).send(challenge);
-  } else {
-    res.status(403).send("Forbidden");
+  // Checks if a token and mode is in the query string of the request
+  if (mode && token) {
+    // Checks the mode and token sent is correct
+    if (mode === "subscribe" && token === VERIFY_TOKEN) {
+      // Responds with the challenge token from the request
+      console.log("WEBHOOK_VERIFIED");
+      res.status(200).send(challenge);
+    } else {
+      // Responds with '403 Forbidden' if verify tokens do not match
+      res.sendStatus(403);
+    }
   }
 });
 
