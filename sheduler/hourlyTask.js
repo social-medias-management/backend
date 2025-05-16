@@ -7,6 +7,7 @@ const { StatusCodes } = require("http-status-codes");
 const moment = require("moment");
 const fs = require("fs");
 const { google } = require("googleapis");
+
 async function runHourlyTask() {
   const currentDate = moment();
 
@@ -49,12 +50,12 @@ async function runHourlyTask() {
           });
         }
         if (platform.youtube.length > 0) {
-          const facebookToken = platform.youtube[0].accessToken;
-          const facebookId = platform.youtube[0].tokenId;
+          const youtubeToken = platform.youtube[0].accessToken;
+          const youtubeId = platform.youtube[0].tokenId;
           userDetail.push({
             key: "youtube",
-            token: facebookToken,
-            socialId: facebookId,
+            token: youtubeToken,
+            socialId: youtubeId,
             userId: id,
           });
         }
@@ -62,14 +63,14 @@ async function runHourlyTask() {
     });
   });
 
-  shedulePosts.forEach((posts) => {
-    userDetail.forEach(async (detail) => {
-      if ((detail.userId = posts.user.toString())) {
+  for (const posts of shedulePosts) {
+    for (const detail of userDetail) {
+      if (detail.userId === posts.user.toString()) {
         if (posts.instagram.length > 0 && detail.key === "instagram") {
           const instagramPosts = JSON.parse(JSON.stringify(posts.instagram));
           const accessToken = detail.token;
           const socialId = detail.socialId;
-          instagramPosts.forEach(async (insta) => {
+          for (const insta of instagramPosts) {
             const url = `https://graph.facebook.com/v20.0/${socialId}/media?`;
 
             const data = {
@@ -84,27 +85,24 @@ async function runHourlyTask() {
               const publishId = res.data;
 
               const publishUrl = `https://graph.facebook.com/v20.0/${socialId}/media_publish?access_token=${accessToken}&creation_id=${publishId.id}`;
-              axios
-                .post(publishUrl)
-                .then((res) =>
-                  console.log("photo uploaded successfulyy instagram")
-                );
+              await axios.post(publishUrl);
+              console.log("Photo uploaded successfully to Instagram");
             } catch (error) {
               console.log(error.message);
             }
-          });
+          }
 
-          // await PostShedule.updateMany(
-          //   { userId: detail.userId },
-          //   { $set: { isPublished: true } }
-          // );
+          await PostShedule.updateMany(
+            { _id: posts._id },
+            { $set: { isPublished: true } }
+          );
         }
 
         if (posts.facebook.length > 0 && detail.key === "facebook") {
           const facebookPosts = JSON.parse(JSON.stringify(posts.facebook));
           const accessToken = detail.token;
           const socialId = detail.socialId;
-          facebookPosts.forEach((facebook) => {
+          for (const facebook of facebookPosts) {
             const url = `https://graph.facebook.com/v20.0/${socialId}/photos`;
 
             const data = {
@@ -114,20 +112,17 @@ async function runHourlyTask() {
             };
 
             try {
-              axios
-                .post(url, data)
-                .then((res) =>
-                  console.log("photo uploaded successfulyy facebook")
-                );
+              await axios.post(url, data);
+              console.log("Photo uploaded successfully to Facebook");
             } catch (error) {
               console.log(error.message);
             }
-          });
+          }
 
-          // await PostShedule.updateMany(
-          //   { userId: detail.userId },
-          //   { $set: { isPublished: true } }
-          // );
+          await PostShedule.updateMany(
+            { _id: posts._id },
+            { $set: { isPublished: true } }
+          );
         }
 
         if (posts.youtube.length > 0 && detail.key === "youtube") {
@@ -135,7 +130,7 @@ async function runHourlyTask() {
           const accessToken = detail.token;
           const socialId = detail.socialId;
 
-          youtubePosts.forEach(async (youtubePost) => {
+          for (const youtubePost of youtubePosts) {
             const ACCESS_TOKEN = accessToken;
             const fileUrl = youtubePost.mediaUrl;
             const filePath = path.join(__dirname, `temp_${socialId}.mp4`);
@@ -203,14 +198,20 @@ async function runHourlyTask() {
             } catch (err) {
               console.error("Error:", err);
             }
-          });
+          }
+
+          await PostShedule.updateMany(
+            { _id: posts._id },
+            { $set: { isPublished: true } }
+          );
         }
       }
-    });
-  });
+    }
+  }
 
   console.log("Running hourly task...");
 }
+
 module.exports = {
   run: runHourlyTask,
 };

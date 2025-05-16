@@ -12,7 +12,7 @@ const {
 
 const register = async (req, res) => {
   const { email, password, name } = req.body;
-
+  console.log(req.body);
   const emailAlreadyExists = await User.findOne({ email });
 
   if (emailAlreadyExists) {

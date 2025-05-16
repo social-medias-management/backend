@@ -7,19 +7,54 @@ const PlatForm = require("../models/PlatForm");
 const saveYoutubeToken = async (req, res) => {
   const { code, platform } = req.body;
 
-  const params = new URLSearchParams();
-  params.append(
-    "client_id",
-    "767357925688-m0cj63gqp1evmf0qj0e73m3oh1t629mu.apps.googleusercontent.com"
-  );
-  params.append("client_secret", "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");
-  params.append("code", code);
-  params.append("grant_type", "authorization_code");
-  params.append("redirect_uri", process.env.GOOGLE_REDIRECT_URI);
+  // const params = new URLSearchParams();
+  // params.append(
+  //   "client_id",
+  //   "767357925688-m0cj63gqp1evmf0qj0e73m3oh1t629mu.apps.googleusercontent.com"
+  // );
+  // params.append("client_secret", "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");
+  // params.append("code", code);
+  // params.append("grant_type", "authorization_code");
+  // params.append("redirect_uri", process.env.GOOGLE_REDIRECT_URI);
+
+  // const paramsObject = Object.fromEntries(params.entries());
+
+  // const params = new URLSearchParams({
+  //   client_id:
+  //     "767357925688-m0cj63gqp1evmf0qj0e73m3oh1t629mu.apps.googleusercontent.com",
+  //   client_secret: "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",
+  //   code: code,
+  //   grant_type: "authorization_code",
+  //   redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+  // });
+
+  // const response = await axios.post(
+  //   "https://oauth2.googleapis.com/token",
+  //   params.toString(),
+  //   {
+  //     headers: {
+  //       "Content-Type": "application/x-www-form-urlencoded",
+  //     },
+  //   }
+  // );
+
+  const params = new URLSearchParams({
+    client_id:
+      "767357925688-m0cj63gqp1evmf0qj0e73m3oh1t629mu.apps.googleusercontent.com",
+    client_secret: "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",
+    code: code,
+    grant_type: "authorization_code",
+    redirect_uri: process.env.GOOGLE_REDIRECT_URI,
+  });
 
   const response = await axios.post(
     "https://oauth2.googleapis.com/token",
-    params
+    params.toString(),
+    {
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+    }
   );
 
   const accessToken = response.data.access_token;

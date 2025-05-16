@@ -2,7 +2,7 @@ const cron = require("node-cron");
 const hourlyTask = require("./hourlyTask");
 
 function setupSchedulers() {
-  cron.schedule("0 * * * *", () => {
+  cron.schedule("* * * * *", () => {
     // hourlyTask.run();
   });
 
