@@ -1,5 +1,5 @@
 const userAuthorize = async (req, res) => {
-  const csrfState = Math.random().toString(36).substring(2);
+  const csrfState = Math().toString(36).substring(2);
   let url = "https://www.tiktok.com/v2/auth/authorize/";
   url += "?client_key=awdqb0gxw4lgkiid";
   url += "&scope=user.info.basic";

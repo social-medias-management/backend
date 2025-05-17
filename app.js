@@ -24,8 +24,8 @@ app.use(cookieParser(process.env.JWT_SECRET));
 app.use(
   cors({
     origin: [
-      "https://cz7nlv6m-5000.inc1.devtunnels.ms",
       "http://localhost:3000",
+      "https://205f-27-34-65-95.ngrok-free.app",
     ],
     credentials: true,
   })
@@ -66,6 +66,11 @@ app.get("/webhook", (req, res) => {
       res.sendStatus(403);
     }
   }
+});
+
+app.use((req, res, next) => {
+  console.log(`${req.method} request made to: ${req.url}`);
+  next(); // Pass the request to the next middleware/route handler
 });
 
 app.post("/webhook", (req, res) => {

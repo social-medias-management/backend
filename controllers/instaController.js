@@ -9,12 +9,15 @@ const { StatusCodes } = require("http-status-codes");
 const saveInstaUser = async (req, res) => {
   const { userId } = req.user;
   const token = await PlatForm.find({ user: userId });
+  console.log("token-", token);
 
   if (!token) {
     throw new CustomError.UnauthenticatedError("Invalid Crendentials ");
   }
 
   const { accessToken, tokenId } = token[0].instagram[0];
+
+  console.log("access", accessToken);
 
   const facebookPageResponse = await axios.get(
     `https://graph.facebook.com/v17.0/${tokenId}/accounts`,
@@ -52,6 +55,8 @@ const saveInstaUser = async (req, res) => {
       break;
     }
   }
+
+  console.log("instagram", instagramAccountId);
 
   if (!instagramAccountId) {
     throw new CustomError.NotFoundError("Instagram account not found");

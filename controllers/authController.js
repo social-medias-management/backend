@@ -11,15 +11,19 @@ const {
 } = require("../utils");
 
 const register = async (req, res) => {
+  console.log("hello from register");
   const { email, password, name } = req.body;
-  console.log(req.body);
   const emailAlreadyExists = await User.findOne({ email });
+
+  console.log("email=", emailAlreadyExists);
 
   if (emailAlreadyExists) {
     throw new CustomError.BadRequestError("Email aready exists");
   }
 
   const user = await User.create({ email, password, name });
+
+  console.log("user=", user);
 
   const tokenUser = createTokenUser(user);
 
@@ -35,7 +39,10 @@ const login = async (req, res) => {
     throw new CustomError.BadRequestError("Please provide email and password ");
   }
 
+  console.log("re", req.body);
+
   const user = await User.findOne({ email });
+  console.log("user", user);
 
   if (!user) {
     throw new CustomError.UnauthenticatedError("Invalid Crendentials ");
@@ -48,6 +55,7 @@ const login = async (req, res) => {
   }
 
   const tokenUser = createTokenUser(user);
+  console.log("token user", tokenUser);
 
   attachCookiesToResponse({ res, tokenUser });
   res.status(StatusCodes.OK).json({ user: tokenUser });
